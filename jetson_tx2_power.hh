@@ -1,75 +1,83 @@
-
 #ifndef _JETSON_TX2_POWER_HH_
-
 #define _JETSON_TX2_POWER_HH_
 
-#include <string>
+#if __cplusplus<201103L
+#error This C++ compiler does not support C++11 standard
+#endif
+
 #include <iostream>
-#include <vector>
 #include <map>
+#include <string>
+#include <vector>
 
-class PowerReadingValue
-{
+class PowerReadingValue {
 protected:
-    std::string name;
-    std::string path;
-    std::string value;
-    int number;
+  std::string name;
+  std::string path;  // Path to the monitor device.
+  std::double value; // The current value of the monitor.
+  int number;
 
 public:
-    PowerReadingValue(std::string name);
-    void update(void);
-    std::string get_name(void);
-    std::string get_value(void);
-    friend std::ostream& operator<< (std::ostream& stream, const PowerReadingValue& value);
+  PowerReadingValue(std::string name);
+  void update(void);
+  std::string get_name(void);
+  std::double get_value(void);
+  friend std::ostream &operator<<(std::ostream &stream,
+                                  const PowerReadingValue &value);
 };
 
-class PowerReadingVoltage: public PowerReadingValue
-{
+class PowerReadingVoltage : public PowerReadingValue {
 public:
-	PowerReadingVoltage(std::string path, int number);
+  PowerReadingVoltage(std::string path, int number);
 };
 
-class PowerReadingCurrent: public PowerReadingValue
-{
+class PowerReadingCurrent : public PowerReadingValue {
 public:
-	PowerReadingCurrent(std::string path, int number);
+  PowerReadingCurrent(std::string path, int number);
 };
 
-class PowerReadingRail
-{
+class PowerReadingPower : public PowerReadingValue {
+public:
+  PowerReadingPower(std::string path, int number);
+}
+
+class PowerReadingRail {
 protected:
-	std::string name;
-	PowerReadingVoltage voltage;
-	PowerReadingCurrent current;
+  std::string name;
+  PowerReadingVoltage voltage;
+  PowerReadingCurrent current;
+  PowerReadingPower power;
 
 public:
-	PowerReadingRail(std::string path, int num);
-	std::string get_name(void);
-	void update(void);
-	std::string to_csv(void);
-	std::string get_csv_header(void);
-	friend std::ostream& operator<< (std::ostream& stream, const PowerReadingRail& r);
+  PowerReadingRail(std::string path, int num);
+  std::string get_name(void);
+  void update(void);
+  std::string to_csv(void);
+  std::string get_csv_header(void);
+  friend std::ostream &operator<<(std::ostream &stream,
+                                  const PowerReadingRail &r);
 };
 
-class PowerReadingDevice
-{
+class PowerReadingDevice {
 protected:
-	std::vector<PowerReadingRail> rails;
+  std::vector<PowerReadingRail> rails;
 
 public:
-	PowerReadingDevice(std::string path);
-	void update(void);
-	std::string to_csv(void);
-	std::string get_csv_header(void);
-	friend std::ostream& operator<< (std::ostream& stream, const PowerReadingDevice& d);
+  PowerReadingDevice(std::string path);
+  void update(void);
+  std::string to_csv(void);
+  std::string get_csv_header(void);
+  friend std::ostream &operator<<(std::ostream &stream,
+                                  const PowerReadingDevice &d);
+
 };
 
 std::vector<PowerReadingDevice> create_devices(void);
-void to_csv(std::string csv_file, std::vector<PowerReadingDevice> &devices, std::string comment);
+void to_csv(std::string csv_file, std::vector<PowerReadingDevice> &devices,
+            std::string comment);
 void to_csv(std::string csv_file, std::vector<PowerReadingDevice> &devices);
 void to_csv(std::string csv_file, std::vector<PowerReadingDevice> &devices,
-		std::map<std::string,std::string> &xtra_fields);
+            std::map<std::string, std::string> &xtra_fields);
 int update_power_values(std::vector<PowerReadingDevice> &devices);
 int print_values(std::vector<PowerReadingDevice> &devices);
 
