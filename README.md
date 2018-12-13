@@ -1,3 +1,9 @@
+# JetsonTX2Power Measurement
+
+This work is based on the original work done by [Leonardo Pereira Santos](https://github.com/leonardopsantos), which is really helpful for me. Thanks a lot.
+
+I only add an additional extension to his code to read the power value from the device monitor and remove the measurement of other devices located on the carrier board.
+
 # jetsonTX2Power
 
 Reads the hardware sensors on the [Jetson TX2](https://developer.nvidia.com/embedded/buy/jetson-tx2) [embedded kit](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems-dev-kits-modules/) board and either prints the values on the screen os writes a CSV file.
